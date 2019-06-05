@@ -41,28 +41,21 @@ public class ContactResourceRESTService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createContact(Contact contact) {
 
+		Response.ResponseBuilder builder = null;
 		Long nextId = contactsRepository.keySet().size() + 1L;
 		try {
-			if (contact.getName() == null) {
-				return Response.status(Response.Status.BAD_REQUEST).build();
-			}
 			// Store the contact
 			contact.setId(nextId);
 			contactsRepository.put(nextId, contact);
 
 			// Create an "ok" response with the persisted contact
-			return Response.ok(contact).build();
+			builder = Response.ok(contact);
 		} catch (Exception e) {
 			// Handle generic exceptions
-			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
 		}
-	}
 
-	// delete all contacts
-	@DELETE
-	public Response removeAllContacts() {
-		contactsRepository.clear();
-		return Response.ok().build();
+		return builder.build();
 	}
 
 	// delete a specific contact
